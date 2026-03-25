@@ -1,0 +1,2381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --black:#0a0a0a;
+  --white:#ffffff;
+  --off-white:#f8f8f6;
+  --gray-100:#f0efed;
+  --gray-200:#e2e1de;
+  --gray-400:#9a9893;
+  --gray-600:#5a5956;
+  --border:#d8d7d4;
+  --accent:#0a0a0a;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'Geist',sans-serif;
+  background:var(--white);
+  color:var(--black);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.6;
+}
+
+.page-wrap{
+  max-width:900px;
+  margin:0 auto;
+  padding:64px 32px 96px;
+}
+
+/* HEADER */
+.header{
+  border-bottom:1px solid var(--black);
+  padding-bottom:32px;
+  margin-bottom:48px;
+}
+
+.header-eyebrow{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+  margin-bottom:16px;
+}
+
+.header-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(32px,5vw,48px);
+  font-weight:400;
+  line-height:1.1;
+  letter-spacing:-1px;
+  margin-bottom:12px;
+}
+
+.header-sub{
+  font-size:13px;
+  color:var(--gray-600);
+  line-height:1.7;
+  max-width:520px;
+}
+
+.header-meta{
+  display:flex;
+  gap:24px;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+
+.meta-item{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.meta-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+}
+
+.meta-value{
+  font-size:13px;
+  font-weight:500;
+  color:var(--black);
+}
+
+/* NAV TABS */
+.nav{
+  display:flex;
+  gap:0;
+  margin-bottom:40px;
+  border-bottom:1px solid var(--border);
+}
+
+.nav-btn{
+  padding:10px 20px;
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.04em;
+  background:none;
+  border:none;
+  border-bottom:2px solid transparent;
+  cursor:pointer;
+  color:var(--gray-400);
+  transition:all .2s;
+  font-family:'Geist',sans-serif;
+  margin-bottom:-1px;
+}
+
+.nav-btn:hover{color:var(--black)}
+.nav-btn.active{color:var(--black);border-bottom-color:var(--black)}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block;animation:panelIn .3s ease forwards}
+
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* SECTION HEADER */
+.section-header{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  font-weight:400;
+  letter-spacing:-.3px;
+}
+
+.section-count{
+  font-family:'DM Mono',monospace;
+  font-size:11px;
+  color:var(--gray-400);
+  letter-spacing:.06em;
+}
+
+/* CATEGORY TABS (sub-nav) */
+.cat-nav{
+  display:flex;
+  gap:8px;
+  margin-bottom:32px;
+  flex-wrap:wrap;
+}
+
+.cat-btn{
+  padding:6px 14px;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.05em;
+  background:none;
+  border:1px solid var(--border);
+  border-radius:2px;
+  cursor:pointer;
+  color:var(--gray-600);
+  transition:all .15s;
+  font-family:'Geist',sans-serif;
+}
+
+.cat-btn:hover{border-color:var(--black);color:var(--black)}
+.cat-btn.active{background:var(--black);color:var(--white);border-color:var(--black)}
+
+/* CATEGORY PANEL */
+.cat-panel{display:none}
+.cat-panel.active{display:block;animation:panelIn .25s ease forwards}
+
+/* TOPIC GROUP */
+.topic-group{
+  margin-bottom:32px;
+}
+
+.topic-group-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+  margin-bottom:14px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--gray-100);
+}
+
+/* TOPIC CARD */
+.topic-card{
+  border:1px solid var(--border);
+  margin-bottom:8px;
+  transition:border-color .15s;
+  cursor:pointer;
+}
+
+.topic-card:hover{border-color:var(--black)}
+
+.topic-card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 16px;
+  user-select:none;
+}
+
+.topic-card-title{
+  font-size:13px;
+  font-weight:500;
+  color:var(--black);
+  flex:1;
+}
+
+.topic-card-toggle{
+  width:16px;
+  height:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  transition:transform .2s;
+  color:var(--gray-400);
+  font-size:11px;
+}
+
+.topic-card.open .topic-card-toggle{transform:rotate(45deg)}
+
+.topic-card-body{
+  display:none;
+  padding:0 16px 16px;
+  border-top:1px solid var(--gray-100);
+}
+
+.topic-card.open .topic-card-body{display:block;animation:panelIn .2s ease forwards}
+
+.subtopic-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin-top:12px;
+}
+
+.subtopic-item{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  font-size:12px;
+  color:var(--gray-600);
+  line-height:1.55;
+}
+
+.subtopic-dot{
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--gray-400);
+  flex-shrink:0;
+  margin-top:5px;
+}
+
+/* NEXT PANEL — grid layout */
+.next-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;
+}
+
+.next-card{
+  padding:18px 20px;
+  border:1px solid var(--border);
+  transition:border-color .15s;
+}
+
+.next-card:hover{border-color:var(--black)}
+
+.next-card-tag{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+  margin-bottom:8px;
+}
+
+.next-card-title{
+  font-size:13px;
+  font-weight:500;
+  color:var(--black);
+  margin-bottom:6px;
+  line-height:1.35;
+}
+
+.next-card-desc{
+  font-size:11px;
+  color:var(--gray-600);
+  line-height:1.55;
+}
+
+/* STATS ROW */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  margin-bottom:40px;
+}
+
+.stat-cell{
+  background:var(--white);
+  padding:20px 24px;
+}
+
+.stat-num{
+  font-family:'Playfair Display',serif;
+  font-size:28px;
+  font-weight:400;
+  color:var(--black);
+  line-height:1;
+  margin-bottom:5px;
+}
+
+.stat-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+}
+
+/* FOOTER */
+.footer{
+  margin-top:64px;
+  padding-top:24px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.footer-note{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.06em;
+  color:var(--gray-400);
+}
+
+/* SKILL MAP PANEL */
+.skillmap-intro{
+  font-size:12px;
+  color:var(--gray-600);
+  line-height:1.7;
+  max-width:560px;
+  margin-bottom:40px;
+  border-left:2px solid var(--black);
+  padding-left:16px;
+}
+
+.skillmap-grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  margin-bottom:24px;
+}
+
+.skillmap-grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+  margin-bottom:24px;
+}
+
+.skillmap-full{
+  margin-bottom:24px;
+}
+
+.chart-box{
+  border:1px solid var(--border);
+  padding:24px;
+  position:relative;
+}
+
+.chart-box-wide{
+  border:1px solid var(--border);
+  padding:24px 28px;
+  position:relative;
+}
+
+.chart-label{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.chart-label-dot{
+  width:6px;
+  height:6px;
+  background:var(--black);
+  border-radius:50%;
+}
+
+/* RADAR */
+#radar-canvas{
+  display:block;
+  margin:0 auto;
+}
+
+/* DEPTH BARS */
+.depth-row{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+}
+
+.depth-item{}
+
+.depth-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:5px;
+}
+
+.depth-name{
+  font-size:11px;
+  font-weight:500;
+  color:var(--black);
+}
+
+.depth-count{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--gray-400);
+}
+
+.depth-track{
+  height:4px;
+  background:var(--gray-100);
+  position:relative;
+  overflow:hidden;
+}
+
+.depth-fill{
+  height:100%;
+  background:var(--black);
+  width:0%;
+  transition:width 1.2s cubic-bezier(.16,1,.3,1);
+}
+
+.depth-fill.animated{
+  /* width set by JS */
+}
+
+/* DONUT CHART */
+#donut-canvas{
+  display:block;
+  margin:0 auto 16px;
+}
+
+.donut-legend{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.legend-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.legend-swatch{
+  width:10px;
+  height:10px;
+  flex-shrink:0;
+}
+
+.legend-text{
+  font-size:11px;
+  color:var(--gray-600);
+  flex:1;
+}
+
+.legend-val{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--gray-400);
+}
+
+/* HEAT MAP */
+.heat-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(72px,1fr));
+  gap:4px;
+}
+
+.heat-cell{
+  height:52px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:4px;
+  position:relative;
+  cursor:default;
+  transition:transform .15s;
+}
+
+.heat-cell:hover{transform:scale(1.04)}
+
+.heat-cell-label{
+  font-size:8px;
+  font-weight:500;
+  line-height:1.3;
+  text-align:center;
+}
+
+.heat-cell-count{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  margin-top:2px;
+}
+
+/* Intensity levels */
+.heat-1{background:#dbeafe;color:#1e40af}
+.heat-2{background:#74bbeb;color:var(--white)}
+.heat-3{background:#2d84c8;color:var(--white)}
+.heat-4{background:#1a4a8c;color:var(--white)}
+.heat-5{background:#0c2461;color:var(--white)}
+
+/* T-SHAPE */
+.tshape-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0;
+}
+
+.tshape-bar{
+  display:flex;
+  width:100%;
+  gap:2px;
+}
+
+.tshape-bar-cell{
+  flex:1;
+  height:32px;
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:8px;
+  font-weight:500;
+  letter-spacing:.03em;
+  text-align:center;
+  line-height:1.2;
+  padding:2px;
+  color:var(--gray-600);
+  transition:background .2s;
+}
+
+.tshape-bar-cell.deep{background:#0c2461;color:var(--white);border-color:#0c2461}
+.tshape-bar-cell.med{background:#1e6aad;color:var(--white);border-color:#1e6aad}
+.tshape-bar-cell.light{background:#5ba8e0;color:var(--white);border-color:#5ba8e0}
+
+.tshape-stem{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  width:calc(200% / 7);
+  margin-top:2px;
+}
+
+.tshape-stem-cell{
+  height:28px;
+  background:#0c2461;
+  border:1px solid #0c2461;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:8px;
+  color:var(--white);
+  font-weight:500;
+  letter-spacing:.02em;
+}
+
+/* SKILL RANK */
+.skill-rank-list{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+
+.skill-rank-row{
+  display:flex;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--gray-100);
+  gap:14px;
+}
+
+.skill-rank-row:last-child{border-bottom:none}
+
+.skill-rank-num{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--gray-400);
+  width:18px;
+  flex-shrink:0;
+}
+
+.skill-rank-name{
+  font-size:12px;
+  font-weight:500;
+  flex:1;
+}
+
+.skill-rank-bar-wrap{
+  width:80px;
+  height:3px;
+  background:var(--gray-100);
+}
+
+.skill-rank-bar{
+  height:100%;
+  background:var(--black);
+  width:0%;
+  transition:width 1.4s cubic-bezier(.16,1,.3,1);
+}
+
+.skill-rank-score{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--gray-600);
+  width:32px;
+  text-align:right;
+}
+
+/* COVERAGE TABLE */
+.coverage-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px;
+}
+
+.coverage-table th{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--gray-400);
+  font-weight:400;
+  text-align:left;
+  padding:0 8px 10px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.coverage-table td{
+  padding:8px 8px 8px 0;
+  border-bottom:1px solid var(--gray-100);
+  vertical-align:middle;
+}
+
+.coverage-table tr:last-child td{border-bottom:none}
+
+.coverage-domain{
+  font-weight:500;
+  color:var(--black);
+}
+
+.coverage-cat{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  color:var(--gray-400);
+}
+
+.coverage-mini-bar{
+  width:100%;
+  height:3px;
+  background:var(--gray-100);
+  margin-top:4px;
+}
+
+.coverage-mini-fill{
+  height:100%;
+  background:var(--black);
+}
+
+.coverage-subtopics{
+  font-family:'DM Mono',monospace;
+  font-size:10px;
+  color:var(--gray-600);
+  text-align:right;
+}
+
+.coverage-status{
+  font-size:9px;
+  padding:2px 7px;
+  border:1px solid;
+}
+
+.status-learned{border-color:var(--black);color:var(--black)}
+.status-queued{border-color:var(--gray-400);color:var(--gray-400)}
+
+/* NEXT QUEUE VIZ */
+.queue-domains{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.queue-tag{
+  padding:5px 11px;
+  border:1px solid var(--border);
+  font-size:10px;
+  color:var(--gray-600);
+  font-family:'DM Mono',monospace;
+  letter-spacing:.03em;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.queue-tag-dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--gray-400);
+}
+
+/* RADIAL PROGRESS */
+.radial-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+
+.radial-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+
+.radial-label{
+  font-size:10px;
+  font-weight:500;
+  text-align:center;
+  color:var(--black);
+  line-height:1.3;
+}
+
+.radial-sub{
+  font-family:'DM Mono',monospace;
+  font-size:9px;
+  color:var(--gray-400);
+}
+
+@media(max-width:600px){
+  .skillmap-grid-2{grid-template-columns:1fr}
+  .skillmap-grid-3{grid-template-columns:1fr}
+  .radial-grid{grid-template-columns:repeat(2,1fr)}
+  .heat-grid{grid-template-columns:repeat(auto-fill,minmax(60px,1fr))}
+}
+
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header class="header">
+    <h1 class="header-name">What I Have<br><em>Learnt.</em></h1>
+  </header>
+
+  <!-- MAIN NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="switchPanel('learned',this)">What I've Learnt</button>
+    <button class="nav-btn" onclick="switchPanel('next',this)">What I Want to Learn Next</button>
+    <button class="nav-btn" onclick="switchPanel('skills',this); initSkillMap()">Knowledge Map & Stats</button>
+  </nav>
+
+  <!-- LEARNED PANEL -->
+  <div id="panel-learned" class="panel active">
+    <div class="section-header">
+      <h2 class="section-title">What I've currently learnt</h2>
+      
+    </div>
+
+    <div class="cat-nav">
+      <button class="cat-btn active" onclick="switchCat('finance',this)">Finance</button>
+      <button class="cat-btn" onclick="switchCat('tech',this)">Science & Technology</button>
+    </div>
+
+    <!-- FINANCE -->
+    <div id="cat-finance" class="cat-panel active">
+
+      <div class="topic-group">
+        <div class="topic-group-label">Private Markets</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Private Equity</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How private equity works and fund lifecycle</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Fund structure — GP, LP, and Accredited Investor roles</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Leveraged Buyout (LBO) mechanics — how PE acquires firms</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>The 2 & 20 compensation model</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>The 80/20 LBO model</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Due diligence process — operational and financial</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Legal due diligence when a PE firm acquires a target</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Major PE firms studied: Blackstone, Apollo Global Management, KKR, Carlyle Group, Ares Management</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Venture Capital & Angel Investing</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How VC and angel investing works and who invests</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Deal process — sourcing, term sheets, due diligence, closing</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Fund structure and how VC operates versus PE</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Stages of investment — pre-seed, seed, Series A/B/C</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Major VC firms studied: Sequoia Capital, Andreessen Horowitz (a16z), Tiger Global Management, Accel, SoftBank Vision Fund</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Portfolio Management & Instruments</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Fund Types & Investment Instruments</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>REITs — Real Estate Investment Trusts and how they distribute income</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Index funds — passive market tracking and expense ratios</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Mutual funds — active management and structure</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Debt funds — fixed income and credit instruments</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Arbitrage funds — exploiting price differentials</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Sectoral & thematic funds</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>ETFs — Exchange Traded Funds and how they differ from mutual funds</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Large cap, mid cap, and small cap categorisation</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Modern Portfolio Theory (MPT)</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Diversification and why it reduces unsystematic risk</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Risk-Return Trade-off</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Efficient Frontier — optimal portfolio construction</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Mean-Variance Analysis</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Asset Allocation frameworks</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Monte Carlo simulations and probabilistic analysis</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Portfolio Analytics & Financial Modeling</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Sharpe Ratio — risk-adjusted return measurement</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Sortino Ratio — downside deviation focus</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>P/E Ratio — price-to-earnings valuation</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Expense Ratio — cost drag on returns</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Standard Deviation — volatility measurement</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>IRR — Internal Rate of Return</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Financial modeling fundamentals</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Trading & Markets</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">HFT / Quantitative Trading</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How High-Frequency Trading operates and its infrastructure</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Jane Street — operating model, strategies, and legal controversies</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Market microstructure and latency arbitrage</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Quantitative strategy construction</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Hedge Funds & Legendary Operators</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How hedge funds work — structure, strategies, fee models</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Citadel — Ken Griffin's multi-strategy platform and Citadel Securities market-making arm</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Bridgewater Associates — Ray Dalio's All Weather and Pure Alpha strategies</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Millennium Management — Izzy Englander's pod-based structure</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Renaissance Technologies — Jim Simons' Medallion Fund and its unmatched returns</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Pershing Square Capital Management — Bill Ackman's activist investing style</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How George Soros and Stan Druckenmiller broke the Bank of England (1992) — the $1B short trade</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How Soros and Druckenmiller became legends — macro investing philosophy and legacy</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Market Manipulation</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How market manipulation works — spoofing, layering, pump and dump</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Legal cases and regulatory enforcement</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Purchasing Power Parity</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>PPP theory and how it measures real economic output across countries</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Why exchange rates diverge from PPP and its implications</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Financial Crises & History</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Major Financial Crises</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>2008 Financial Crisis — causes, contagion, and aftermath</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Mortgage-Backed Securities (MBS) and CDOs — how they collapsed</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Dot-com bubble crash — valuation mania and correction</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Fall of Lehman Brothers — why it was allowed to collapse and global systemic fallout</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>AIG bailout — how one insurer's CDS exposure nearly took down the financial system</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Silicon Valley Bank collapse — bank run mechanics, duration risk, and regulatory failure</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>JP Morgan's role — how Jamie Dimon's firm was called in to acquire Bear Stearns, WaMu, and First Republic</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Corporate & Legal Case Studies</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">FTX Bankruptcy — Legal Case Study</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How FTX collapsed — Sam Bankman-Fried's misuse of customer funds via Alameda Research (Caroline Ellison)</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Bankruptcy process under Chapter 11 — creditor hierarchy, John J. Ray III as restructuring CEO</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Allegations against SBF — fraud, wire fraud, money laundering conspiracy, campaign finance violations</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Criminal trial outcome — conviction on all 7 counts, 25-year sentence</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Regulatory fallout — what FTX changed about global crypto oversight and exchange regulation</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">WeWork Bankruptcy — Legal Case Study</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Adam Neumann's WeWork — how it was valued at $47B and why that valuation was fiction</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Failed IPO — S-1 disclosure, governance red flags, related-party transactions, market rejection</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Adam Neumann's removal and the SoftBank (Masayoshi Son) intervention</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Chapter 11 bankruptcy filing and collapse of the co-working model at scale</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Lessons on corporate governance, VC overvaluation, and the dangers of founder-led narrative</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Warner Bros. & Netflix — Last-Minute Deal Cancellation</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How the deal was structured and what Warner Bros. Discovery and Netflix each expected</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Why the deal collapsed at the final stage — strategic divergence, valuation disagreement, and control terms</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Impact on content licensing, streaming exclusivity strategy, and studio economics</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>What last-minute deal collapses reveal about M&A negotiation dynamics and due diligence gaps</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Global Financial & Legal Hubs</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">World's Financial & Legal Centres</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>London — global hub for capital markets, FX trading, English law, Lloyd's insurance market, and the City of London's regulatory framework</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>New York City — home of Wall Street, NYSE, NASDAQ, global investment banking, and USD reserve currency dominance</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Singapore — Asia-Pacific financial and arbitration hub, MAS regulation, family office capital, and SIAC arbitration</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>The Hague — international legal capital, seat of the ICJ, ICC, PCA, and cross-border arbitration courts</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Delaware — US corporate law capital, Court of Chancery (no jury trials), why 60%+ of Fortune 500 and most PE portfolio companies incorporate here</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Banking, Tax & Corporate Law</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Banking — Operational Model & Structure</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How retail and commercial banks operate — fractional reserve, NIM</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Bank organisational structure — front office, middle office, back office</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Capital adequacy and Basel framework overview</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Investment Banking</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>What investment banking is and its role in capital markets</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>IPO process — from filing to listing</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>M&A advisory — deal structuring, valuation, execution</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>IB structure — divisions, analyst to MD hierarchy</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Tax Strategy, Optimization & Evasion</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Tax loss harvesting — crystallising losses to offset gains</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Tax optimisation and legal avoidance structures</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Legal case studies of tax evasion and enforcement</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Money laundering — mechanisms, detection, prosecution</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Crypto washing and blockchain-based laundering</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Hawala system — informal value transfer networks</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Offshore Banking, Tax Havens & Swiss Banking</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How offshore banking and tax havens operate</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Swiss banking secrecy — history, mechanics, and modern erosion</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Swiss bank accounts — who uses them and how</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>The fall of Credit Suisse — risk management failure and UBS acquisition</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Corporate Structures & Jurisdiction Choice</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Why companies prefer Delaware incorporation — legal flexibility, Court of Chancery</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Why English law dominates international contracts and finance</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Double Irish with a Dutch Sandwich — big tech tax avoidance structure</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Corporate Consulting</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How management consulting operates — engagement model, fee structures, slide-deck culture</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>McKinsey & Company — when firms call them in, what they actually do, opioid crisis controversy (Marvin Bower legacy vs modern reputation)</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>The consulting industry structure — MBB (McKinsey, BCG, Bain) and the tier system</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SCIENCE & TECH -->
+    <div id="cat-tech" class="cat-panel">
+
+      <div class="topic-group">
+        <div class="topic-group-label">Artificial Intelligence — Foundations</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Neural Networks & AI Architecture</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How neural networks work — layers, weights, activation, backpropagation</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>AI canonical architecture — transformer, attention mechanism</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Narrow AI vs General AI — definitions, current state, use cases</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Expert systems — rule-based AI and tree search</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Machine Learning — Types & Methods</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How ML classifies, clusters, and performs regression</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Supervised learning — labelled data and prediction</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Unsupervised learning — pattern discovery without labels</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Reinforcement learning — reward-based optimisation</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>AI training data — why data quality determines model quality</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>AI bias — how biased data produces biased outputs</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Agentic AI</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>What agentic AI is — autonomous goal-directed systems</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Types of AI agents — reactive, deliberative, multi-agent systems</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Role of agentic AI in enterprise workflows and automation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">Advanced Computing & Algorithms</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Quantum Computing</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How quantum computing works — qubits, superposition, entanglement</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Quantum advantage — where it outperforms classical computing</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Quantum Agentic AI — convergence of quantum computing and agentic systems</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How HFT and quant trading would leverage quantum computing</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">NegaScout Algorithm</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>NegaScout as an optimised Alpha-Beta pruning search algorithm</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Null-window search — proving inferiority without full evaluation</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Principal Variation (PV) and how to identify the best candidate first</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Application to decision-making — commit to PV, cheaply eliminate alternatives</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Markov Chains</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Markov property — memoryless state transitions</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Transition matrices and steady-state distributions</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Applications in AI, finance, and language modelling</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="topic-group">
+        <div class="topic-group-label">AI in Finance</div>
+
+        <div class="topic-card" onclick="toggleCard(this)">
+          <div class="topic-card-header">
+            <span class="topic-card-title">Aladdin AI — BlackRock</span>
+            <span class="topic-card-toggle">+</span>
+          </div>
+          <div class="topic-card-body">
+            <ul class="subtopic-list">
+              <li class="subtopic-item"><span class="subtopic-dot"></span>What Aladdin is — Asset, Liability, Debt and Derivative Investment Network; built by Larry Fink's BlackRock</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>How BlackRock uses Aladdin to monitor and manage risk across $20+ trillion in assets under oversight</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Risk analytics engine — runs millions of scenario simulations daily across global portfolios</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Aladdin as a B2B SaaS platform — licensed to pension funds, insurers, sovereign wealth funds, and other asset managers</li>
+              <li class="subtopic-item"><span class="subtopic-dot"></span>Systemic risk debate — what it means when one AI platform influences decisions across trillions in global capital simultaneously</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div id="panel-next" class="panel">
+    <div class="section-header">
+      <h2 class="section-title">What I want to learn next</h2>
+      
+    </div>
+
+    <div class="next-grid">
+
+      <div class="next-card">
+        <div class="next-card-tag">Infrastructure</div>
+        <div class="next-card-title">Cloud & Cloud Computing</div>
+        <div class="next-card-desc">Architecture, service models (IaaS/PaaS/SaaS), major providers (AWS, Azure, GCP), and how cloud underpins modern data systems.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">DevOps / Engineering</div>
+        <div class="next-card-title">Release Gates</div>
+        <div class="next-card-desc">Quality checkpoints in software deployment pipelines — how code moves from development to production safely.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Cybersecurity</div>
+        <div class="next-card-title">Incident Flow During Cyber Attack</div>
+        <div class="next-card-desc">How organisations detect, contain, and recover from security incidents — the full operational playbook end-to-end.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Enterprise SaaS</div>
+        <div class="next-card-title">Vendor Flow During SaaS Transactions</div>
+        <div class="next-card-desc">How enterprise SaaS procurement flows — contracts, onboarding, data handling obligations, and exit clauses.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Data Architecture</div>
+        <div class="next-card-title">User / Data Flow</div>
+        <div class="next-card-desc">How data moves through systems — from user input to storage to processing to output and back.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Compliance</div>
+        <div class="next-card-title">Control Mapping</div>
+        <div class="next-card-desc">How security and privacy controls map to regulatory frameworks — the bridge between technical implementation and legal obligation.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Regulation</div>
+        <div class="next-card-title">AI Governance</div>
+        <div class="next-card-desc">Frameworks for governing AI systems — accountability, transparency, auditability, and risk management in deployment.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Data Privacy Law</div>
+        <div class="next-card-title">GDPR</div>
+        <div class="next-card-desc">EU's General Data Protection Regulation — data subject rights, controller/processor obligations, cross-border transfers, and enforcement penalties.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Regulation</div>
+        <div class="next-card-title">EU AI Act</div>
+        <div class="next-card-desc">The world's first comprehensive AI law — risk tier classification (unacceptable/high/limited/minimal), prohibited uses, and compliance obligations.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Regulation</div>
+        <div class="next-card-title">Singapore Agentic AI Governance</div>
+        <div class="next-card-desc">Singapore's Model AI Governance Framework (MAS/PDPC) and its approach to agentic and autonomous AI system deployment.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Standards</div>
+        <div class="next-card-title">NIST AI RMF</div>
+        <div class="next-card-desc">NIST Artificial Intelligence Risk Management Framework — four core functions: Govern, Map, Measure, Manage.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Emerging Law</div>
+        <div class="next-card-title">California Neurorights Bill (SB 1223)</div>
+        <div class="next-card-desc">Senate Bill 1223 — protecting neural data as sensitive personal data; implications for BCI companies including Neuralink (Elon Musk).</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Fintech</div>
+        <div class="next-card-title">Fintech Payment Guardrails</div>
+        <div class="next-card-desc">Regulatory controls on digital payments — AML/KYC obligations, transaction monitoring, SWIFT alternatives, and cross-border compliance.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Neurotechnology</div>
+        <div class="next-card-title">NegaScout + Markov Chains in Neuralink</div>
+        <div class="next-card-desc">How NegaScout search optimisation and Markov chain probabilistic models could be applied to BCI signal decoding and neural pathway prediction in Neuralink-type systems.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Ethics</div>
+        <div class="next-card-title">AI Ethics & Bias Detection</div>
+        <div class="next-card-desc">Frameworks for identifying, measuring, and mitigating bias in AI systems — fairness definitions, disparate impact, and ethical review processes.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Interpretability</div>
+        <div class="next-card-title">Explainable AI (XAI)</div>
+        <div class="next-card-desc">Techniques for making AI decision-making interpretable — LIME, SHAP, attention visualisation, and regulatory demands for explainability in high-stakes contexts.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI / Computer Science</div>
+        <div class="next-card-title">Computer Vision</div>
+        <div class="next-card-desc">How machines interpret visual data — CNNs, object detection (YOLO, R-CNN), image segmentation, and applications in surveillance, medical imaging, and autonomous vehicles.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">Data Engineering</div>
+        <div class="next-card-title">Big Data</div>
+        <div class="next-card-desc">The 4 Vs (volume, velocity, variety, veracity), distributed computing (Hadoop, Spark), data lakes vs warehouses, and how scale changes data architecture.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI Architecture</div>
+        <div class="next-card-title">RAG Architecture</div>
+        <div class="next-card-desc">Retrieval-Augmented Generation — how LLMs are combined with live document retrieval to produce grounded, verifiable, and up-to-date outputs.</div>
+      </div>
+
+      <div class="next-card">
+        <div class="next-card-tag">AI / Privacy</div>
+        <div class="next-card-title">Federated Learning</div>
+        <div class="next-card-desc">Training ML models across decentralised devices without sharing raw data — how it preserves privacy while enabling collaborative model improvement at scale.</div>
+      </div>
+
+    </div>
+  </div>  <!-- SKILL MAP & STATS PANEL -->
+  <div id="panel-skills" class="panel">
+
+    <div class="section-header">
+      <h2 class="section-title">Knowledge Map & Stats</h2>
+
+    </div>
+
+
+
+
+
+    <!-- ROW 2: Radar + Depth Bars -->
+    <div class="skillmap-grid-2 skillmap-full">
+
+      <!-- RADAR CHART -->
+      <div class="chart-box">
+        <div class="chart-label"><span class="chart-label-dot"></span>Skill Radar — 8 Dimensions</div>
+        <canvas id="radar-canvas" width="320" height="300"></canvas>
+        <div style="margin-top:14px;font-size:10px;color:var(--gray-400);font-family:'DM Mono',monospace;line-height:1.8;text-align:center">
+          Scores derived from subtopics studied per domain
+        </div>
+      </div>
+
+      <!-- DEPTH BARS -->
+      <div class="chart-box">
+        <div class="chart-label"><span class="chart-label-dot"></span>Domain Depth — Subtopics Studied</div>
+        <div class="depth-row" id="depth-bars">
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Corporate Law & Case Studies</span>
+              <span class="depth-count">38 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="93"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Portfolio Analytics & Instruments</span>
+              <span class="depth-count">21 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="82"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">AI Architecture & ML</span>
+              <span class="depth-count">13 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="74"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Financial Crises & Market History</span>
+              <span class="depth-count">7 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="70"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Hedge Funds & Legendary Operators</span>
+              <span class="depth-count">8 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="66"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Private Markets (PE & VC)</span>
+              <span class="depth-count">13 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="62"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Quantitative & HFT</span>
+              <span class="depth-count">4 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="55"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Emerging Tech (Quantum, Algorithms)</span>
+              <span class="depth-count">11 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="50"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Agentic AI & AI in Finance</span>
+              <span class="depth-count">8 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="48"></div></div>
+          </div>
+
+          <div class="depth-item">
+            <div class="depth-meta">
+              <span class="depth-name">Cybersecurity <span style="font-size:9px;color:var(--gray-400)">(queued)</span></span>
+              <span class="depth-count">0 subtopics</span>
+            </div>
+            <div class="depth-track"><div class="depth-fill" data-pct="8"></div></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 3: T-Shape + Donut -->
+    <div class="skillmap-grid-2 skillmap-full">
+
+      <!-- T-SHAPE PROFILE -->
+      <div class="chart-box">
+        <div class="chart-label"><span class="chart-label-dot"></span>T-Shaped Skill Profile</div>
+        <div style="font-size:10px;color:var(--gray-400);margin-bottom:16px;line-height:1.6">
+          Broad across 7 domains. Deep in Corporate Law + AI Architecture.
+        </div>
+        <div class="tshape-wrap">
+          <div class="tshape-bar">
+            <div class="tshape-bar-cell deep">Corporate<br>Law</div>
+            <div class="tshape-bar-cell med">Portfolio<br>Analytics</div>
+            <div class="tshape-bar-cell med">AI Arch.</div>
+            <div class="tshape-bar-cell light">Fin.<br>History</div>
+            <div class="tshape-bar-cell light">Hedge<br>Funds</div>
+            <div class="tshape-bar-cell light">PE / VC</div>
+            <div class="tshape-bar-cell light">Quant<br>HFT</div>
+          </div>
+          <div class="tshape-stem">
+            <div class="tshape-stem-cell">Corporate Law depth</div>
+            <div class="tshape-stem-cell">FTX · WeWork · Warner</div>
+            <div class="tshape-stem-cell">Tax · Offshore · Delaware</div>
+            <div class="tshape-stem-cell">Legal Due Diligence</div>
+            <div class="tshape-stem-cell">Chapter 11 Mechanics</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:10px;height:10px;background:#0c2461"></div>
+            <span style="font-size:10px;color:var(--gray-600)">Good knowledge</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:10px;height:10px;background:#1e6aad"></div>
+            <span style="font-size:10px;color:var(--gray-600)">Solid working knowledge</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:10px;height:10px;background:#5ba8e0"></div>
+            <span style="font-size:10px;color:var(--gray-600)">Broad coverage</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DONUT CHART + LEGEND -->
+      <div class="chart-box">
+        <div class="chart-label"><span class="chart-label-dot"></span>Topic Distribution by Category</div>
+        <canvas id="donut-canvas" width="180" height="180"></canvas>
+        <div class="donut-legend">
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#0c2461"></div>
+            <span class="legend-text">Corporate & Legal</span>
+            <span class="legend-val">38 subtopics · 18%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#1a4a8c"></div>
+            <span class="legend-text">Portfolio & Instruments</span>
+            <span class="legend-val">21 subtopics · 10%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#1e6aad"></div>
+            <span class="legend-text">Trading & Hedge Funds</span>
+            <span class="legend-val">14 subtopics · 7%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#2d84c8"></div>
+            <span class="legend-text">Private Markets (PE/VC)</span>
+            <span class="legend-val">13 subtopics · 6%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#4a9fd9"></div>
+            <span class="legend-text">AI Architecture & ML</span>
+            <span class="legend-val">13 subtopics · 6%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#74bbeb"></div>
+            <span class="legend-text">Emerging Tech & Algorithms</span>
+            <span class="legend-val">11 subtopics · 5%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#a2d3f5"></div>
+            <span class="legend-text">Financial Crises & History</span>
+            <span class="legend-val">7 subtopics · 3%</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-swatch" style="background:#cce5fa;border:1px solid var(--border)"></div>
+            <span class="legend-text">Agentic AI & AI in Finance</span>
+            <span class="legend-val">8 subtopics · 4%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 4: Topic Heat Map -->
+    <div class="skillmap-full">
+      <div class="chart-box-wide">
+        <div class="chart-label"><span class="chart-label-dot"></span>Knowledge Density Heatmap — Every Topic, Colour-Coded by Subtopic Count</div>
+        <div style="font-size:10px;color:var(--gray-400);margin-bottom:16px;line-height:1.6;font-family:'DM Mono',monospace">
+          Darker = more subtopics studied. Hover to see count.
+        </div>
+        <div class="heat-grid" id="heat-grid"></div>
+        <div style="margin-top:16px;display:flex;gap:4px;align-items:center">
+          <span style="font-size:9px;color:var(--gray-400);margin-right:6px;font-family:'DM Mono',monospace">DENSITY:</span>
+          <div style="width:18px;height:10px;background:#dbeafe;border:1px solid var(--border)"></div>
+          <div style="width:18px;height:10px;background:#74bbeb"></div>
+          <div style="width:18px;height:10px;background:#2d84c8"></div>
+          <div style="width:18px;height:10px;background:#1a4a8c"></div>
+          <div style="width:18px;height:10px;background:#0c2461"></div>
+          <span style="font-size:9px;color:var(--gray-400);margin-left:6px;font-family:'DM Mono',monospace">2 → 8+ subtopics</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 5: Skill Rank + Coverage Table -->
+    <div class="skillmap-grid-2 skillmap-full">
+
+      <!-- SKILL RANK -->
+      <div class="chart-box">
+        <div class="chart-label"><span class="chart-label-dot"></span>Skill Score Ranking</div>
+        <div class="skill-rank-list" id="skill-rank-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- RADIAL MINI STATS -->
+      <div class="chart-box">
+        <div class="chart-label"><span class="chart-label-dot"></span>Quick-Glance Radial Stats</div>
+        <div class="radial-grid">
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="93" data-label="93%"></canvas>
+            <div class="radial-label">Corp. Law</div>
+            <div class="radial-sub">38 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="82" data-label="82%"></canvas>
+            <div class="radial-label">Portfolio Analytics</div>
+            <div class="radial-sub">21 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="74" data-label="74%"></canvas>
+            <div class="radial-label">AI Arch.</div>
+            <div class="radial-sub">13 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="66" data-label="66%"></canvas>
+            <div class="radial-label">Hedge Funds</div>
+            <div class="radial-sub">8 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="62" data-label="62%"></canvas>
+            <div class="radial-label">PE & VC</div>
+            <div class="radial-sub">13 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="55" data-label="55%"></canvas>
+            <div class="radial-label">Quant / HFT</div>
+            <div class="radial-sub">4 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="50" data-label="50%"></canvas>
+            <div class="radial-label">Emerging Tech</div>
+            <div class="radial-sub">11 subtopics</div>
+          </div>
+          <div class="radial-item">
+            <canvas class="radial-arc" width="72" height="72" data-pct="8" data-label="8%"></canvas>
+            <div class="radial-label">Cybersecurity</div>
+            <div class="radial-sub">queued</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 6: Full Coverage Table -->
+    <div class="skillmap-full">
+      <div class="chart-box-wide">
+        <div class="chart-label"><span class="chart-label-dot"></span>Complete Coverage Table — Every Topic, Every Domain</div>
+        <table class="coverage-table">
+          <thead>
+            <tr>
+              <th style="width:38%">Topic</th>
+              <th style="width:16%">Domain</th>
+              <th style="width:24%">Depth</th>
+              <th style="width:8%">Subtopics</th>
+              <th style="width:14%">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="coverage-domain">FTX Bankruptcy — Legal Case Study</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:100%"></div></div></td>
+              <td class="coverage-subtopics">5</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Private Equity</div></td>
+              <td><div class="coverage-cat">Private Markets</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:100%"></div></div></td>
+              <td class="coverage-subtopics">8</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Hedge Funds & Legendary Operators</div></td>
+              <td><div class="coverage-cat">Trading</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:100%"></div></div></td>
+              <td class="coverage-subtopics">8</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Fund Types & Investment Instruments</div></td>
+              <td><div class="coverage-cat">Portfolio</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:100%"></div></div></td>
+              <td class="coverage-subtopics">8</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Portfolio Analytics & Financial Modeling</div></td>
+              <td><div class="coverage-cat">Portfolio</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:88%"></div></div></td>
+              <td class="coverage-subtopics">7</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Tax Strategy, Optimization & Evasion</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:75%"></div></div></td>
+              <td class="coverage-subtopics">6</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Modern Portfolio Theory (MPT)</div></td>
+              <td><div class="coverage-cat">Portfolio</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:75%"></div></div></td>
+              <td class="coverage-subtopics">6</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Machine Learning — Types & Methods</div></td>
+              <td><div class="coverage-cat">AI Arch.</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:75%"></div></div></td>
+              <td class="coverage-subtopics">6</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">WeWork Bankruptcy — Legal Case Study</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:63%"></div></div></td>
+              <td class="coverage-subtopics">5</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Aladdin AI — BlackRock</div></td>
+              <td><div class="coverage-cat">AI in Finance</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:63%"></div></div></td>
+              <td class="coverage-subtopics">5</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Venture Capital & Angel Investing</div></td>
+              <td><div class="coverage-cat">Private Markets</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:63%"></div></div></td>
+              <td class="coverage-subtopics">5</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Major Financial Crises</div></td>
+              <td><div class="coverage-cat">Fin. History</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:88%"></div></div></td>
+              <td class="coverage-subtopics">7</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Neural Networks & AI Architecture</div></td>
+              <td><div class="coverage-cat">AI Arch.</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:50%"></div></div></td>
+              <td class="coverage-subtopics">4</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Quantum Computing</div></td>
+              <td><div class="coverage-cat">Emerging Tech</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:50%"></div></div></td>
+              <td class="coverage-subtopics">4</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">NegaScout Algorithm</div></td>
+              <td><div class="coverage-cat">Emerging Tech</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:50%"></div></div></td>
+              <td class="coverage-subtopics">4</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">HFT / Quantitative Trading</div></td>
+              <td><div class="coverage-cat">Trading</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:50%"></div></div></td>
+              <td class="coverage-subtopics">4</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Offshore Banking, Tax Havens & Swiss Banking</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:50%"></div></div></td>
+              <td class="coverage-subtopics">4</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Warner Bros. & Netflix — Deal Cancellation</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:50%"></div></div></td>
+              <td class="coverage-subtopics">4</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Agentic AI</div></td>
+              <td><div class="coverage-cat">AI Arch.</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:38%"></div></div></td>
+              <td class="coverage-subtopics">3</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Markov Chains</div></td>
+              <td><div class="coverage-cat">Emerging Tech</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:38%"></div></div></td>
+              <td class="coverage-subtopics">3</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Corporate Structures & Jurisdiction Choice</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:38%"></div></div></td>
+              <td class="coverage-subtopics">3</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Corporate Consulting (MBB)</div></td>
+              <td><div class="coverage-cat">Corp. Law</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:38%"></div></div></td>
+              <td class="coverage-subtopics">3</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Market Manipulation</div></td>
+              <td><div class="coverage-cat">Trading</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:25%"></div></div></td>
+              <td class="coverage-subtopics">2</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Purchasing Power Parity</div></td>
+              <td><div class="coverage-cat">Macro</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:25%"></div></div></td>
+              <td class="coverage-subtopics">2</td>
+              <td><span class="coverage-status status-learned">Learnt</span></td>
+            </tr>
+            <!-- Queued -->
+            <tr>
+              <td><div class="coverage-domain">Cloud & Cloud Computing</div></td>
+              <td><div class="coverage-cat">Infrastructure</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:0%"></div></div></td>
+              <td class="coverage-subtopics">—</td>
+              <td><span class="coverage-status status-queued">Queued</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">GDPR</div></td>
+              <td><div class="coverage-cat">Data Privacy</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:0%"></div></div></td>
+              <td class="coverage-subtopics">—</td>
+              <td><span class="coverage-status status-queued">Queued</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">EU AI Act</div></td>
+              <td><div class="coverage-cat">AI Regulation</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:0%"></div></div></td>
+              <td class="coverage-subtopics">—</td>
+              <td><span class="coverage-status status-queued">Queued</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">RAG Architecture</div></td>
+              <td><div class="coverage-cat">AI Arch.</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:0%"></div></div></td>
+              <td class="coverage-subtopics">—</td>
+              <td><span class="coverage-status status-queued">Queued</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Incident Flow During Cyber Attack</div></td>
+              <td><div class="coverage-cat">Cybersecurity</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:0%"></div></div></td>
+              <td class="coverage-subtopics">—</td>
+              <td><span class="coverage-status status-queued">Queued</span></td>
+            </tr>
+            <tr>
+              <td><div class="coverage-domain">Federated Learning</div></td>
+              <td><div class="coverage-cat">AI / Privacy</div></td>
+              <td><div class="coverage-mini-bar"><div class="coverage-mini-fill" style="width:0%"></div></div></td>
+              <td class="coverage-subtopics">—</td>
+              <td><span class="coverage-status status-queued">Queued</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROW 7: Learning Queue Visual -->
+    <div class="skillmap-full">
+      <div class="chart-box-wide">
+        <div class="chart-label"><span class="chart-label-dot"></span>Learning Queue — 20 Targets by Domain</div>
+        <div class="queue-domains" id="queue-domains">
+          <div class="queue-tag"><span class="queue-tag-dot"></span>AI Regulation</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Data Privacy Law</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Cybersecurity</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>AI Standards (NIST)</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Infrastructure / Cloud</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>DevOps / Engineering</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Enterprise SaaS</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Compliance</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Fintech Payments</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Neurotechnology</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>AI Ethics & Bias</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Explainable AI (XAI)</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Big Data</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>RAG Architecture</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Federated Learning</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Computer Vision</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Emerging Law (Neurorights)</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Singapore AI Governance</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Data Architecture</div>
+          <div class="queue-tag"><span class="queue-tag-dot"></span>Control Mapping</div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div style="padding:12px;border:1px solid var(--border)">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray-400);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase">Biggest Gap</div>
+            <div style="font-size:12px;font-weight:500">Cybersecurity</div>
+            <div style="font-size:11px;color:var(--gray-600);margin-top:3px">0 subtopics today → full module queued</div>
+          </div>
+          <div style="padding:12px;border:1px solid var(--border)">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray-400);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase">Fastest to Fill</div>
+            <div style="font-size:12px;font-weight:500">RAG Architecture</div>
+            <div style="font-size:11px;color:var(--gray-600);margin-top:3px">Builds directly on ML & Neural Net foundation</div>
+          </div>
+          <div style="padding:12px;border:1px solid var(--border)">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray-400);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase">Highest Leverage</div>
+            <div style="font-size:12px;font-weight:500">EU AI Act + GDPR</div>
+            <div style="font-size:11px;color:var(--gray-600);margin-top:3px">Connects existing Corp Law depth to AI frontier</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /panel-skills -->
+
+
+<script>
+function switchPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function switchCat(id, btn) {
+  document.querySelectorAll('.cat-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('cat-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toggleCard(card) {
+  card.classList.toggle('open');
+}
+
+/* =========================================================
+   SKILL MAP INIT
+   ========================================================= */
+let skillMapInited = false;
+
+function initSkillMap() {
+  if (skillMapInited) return;
+  skillMapInited = true;
+
+  requestAnimationFrame(() => {
+    drawRadar();
+    drawDonut();
+    buildHeatMap();
+    buildSkillRank();
+    animateDepthBars();
+    drawRadialArcs();
+  });
+}
+
+/* ---- RADAR CHART ---- */
+function drawRadar() {
+  const canvas = document.getElementById('radar-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2 + 10;
+  const R = Math.min(W, H) * 0.36;
+  const levels = 5;
+
+  const axes = [
+    { label: 'Corporate Law', score: 0.93 },
+    { label: 'Portfolio Analytics', score: 0.82 },
+    { label: 'Fin. History', score: 0.70 },
+    { label: 'Quant / HFT', score: 0.55 },
+    { label: 'Cybersecurity', score: 0.08 },
+    { label: 'Emerging Tech', score: 0.50 },
+    { label: 'AI Architecture', score: 0.74 },
+    { label: 'PE & VC', score: 0.62 },
+  ];
+
+  const n = axes.length;
+  const angleStep = (Math.PI * 2) / n;
+  const startAngle = -Math.PI / 2;
+
+  function getCoord(i, r) {
+    const angle = startAngle + i * angleStep;
+    return {
+      x: cx + r * Math.cos(angle),
+      y: cy + r * Math.sin(angle)
+    };
+  }
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid rings
+  for (let l = 1; l <= levels; l++) {
+    const r = R * (l / levels);
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const p = getCoord(i, r);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = l === levels ? '#d8d7d4' : '#e8e7e4';
+    ctx.lineWidth = l === levels ? 1 : 0.8;
+    ctx.stroke();
+  }
+
+  // Axis lines
+  for (let i = 0; i < n; i++) {
+    const p = getCoord(i, R);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = '#e2e1de';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+
+  // Score polygon with animation
+  let progress = 0;
+  function animatePolygon() {
+    progress = Math.min(progress + 0.04, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+
+    // Clear polygon area only
+    ctx.clearRect(0, 0, W, H);
+
+    // Redraw grid
+    for (let l = 1; l <= levels; l++) {
+      const r = R * (l / levels);
+      ctx.beginPath();
+      for (let i = 0; i < n; i++) {
+        const p = getCoord(i, r);
+        i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = l === levels ? '#d8d7d4' : '#e8e7e4';
+      ctx.lineWidth = l === levels ? 1 : 0.8;
+      ctx.stroke();
+    }
+
+    for (let i = 0; i < n; i++) {
+      const p = getCoord(i, R);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(p.x, p.y);
+      ctx.strokeStyle = '#e2e1de';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+
+    // Score fill
+    ctx.beginPath();
+    for (let i = 0; i < n; i++) {
+      const r = R * axes[i].score * ease;
+      const p = getCoord(i, r);
+      i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(204,229,250,0.75)';
+    ctx.fill();
+    ctx.strokeStyle = '#1e6aad';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Dots on vertices
+    for (let i = 0; i < n; i++) {
+      const r = R * axes[i].score * ease;
+      const p = getCoord(i, r);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#1e6aad';
+      ctx.fill();
+    }
+
+    // Labels (always full, outside ring)
+    ctx.font = '500 10px "Geist", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (let i = 0; i < n; i++) {
+      const p = getCoord(i, R + 26);
+      ctx.fillStyle = '#5a5956';
+      ctx.fillText(axes[i].label, p.x, p.y);
+
+      // Score label small
+      const ps = getCoord(i, R * axes[i].score * ease + 10);
+      if (axes[i].score * ease > 0.15) {
+        ctx.font = '400 9px "DM Mono", monospace';
+        ctx.fillStyle = '#0a0a0a';
+        ctx.fillText(Math.round(axes[i].score * 100) + '%', ps.x, ps.y);
+        ctx.font = '500 10px "Geist", sans-serif';
+      }
+    }
+
+    if (progress < 1) requestAnimationFrame(animatePolygon);
+  }
+
+  animatePolygon();
+}
+
+/* ---- DONUT CHART ---- */
+function drawDonut() {
+  const canvas = document.getElementById('donut-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const outerR = Math.min(W, H) * 0.44;
+  const innerR = outerR * 0.55;
+
+  const slices = [
+    { pct: 0.18, color: '#0c2461' },
+    { pct: 0.10, color: '#1a4a8c' },
+    { pct: 0.07, color: '#1e6aad' },
+    { pct: 0.06, color: '#2d84c8' },
+    { pct: 0.06, color: '#4a9fd9' },
+    { pct: 0.05, color: '#74bbeb' },
+    { pct: 0.03, color: '#a2d3f5' },
+    { pct: 0.04, color: '#cce5fa' },
+    { pct: 0.41, color: '#e8f4fd' }, // remaining "other subtopics"
+  ];
+
+  let progress = 0;
+  function animateDonut() {
+    progress = Math.min(progress + 0.045, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+
+    ctx.clearRect(0, 0, W, H);
+
+    let startAngle = -Math.PI / 2;
+    const totalAngle = Math.PI * 2 * ease;
+
+    for (const s of slices) {
+      const sweep = totalAngle * s.pct;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, outerR, startAngle, startAngle + sweep);
+      ctx.closePath();
+      ctx.fillStyle = s.color;
+      ctx.fill();
+      startAngle += sweep;
+    }
+
+    // Inner circle cutout
+    ctx.beginPath();
+    ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // Center text
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '400 18px "Playfair Display", serif';
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillText('210+', cx, cy - 8);
+    ctx.font = '400 9px "DM Mono", monospace';
+    ctx.fillStyle = '#9a9893';
+    ctx.letterSpacing = '0.08em';
+    ctx.fillText('SUBTOPICS', cx, cy + 10);
+
+    if (progress < 1) requestAnimationFrame(animateDonut);
+  }
+
+  animateDonut();
+}
+
+/* ---- HEAT MAP ---- */
+function buildHeatMap() {
+  const topics = [
+    { name: 'Private Equity', count: 8 },
+    { name: 'Hedge Funds', count: 8 },
+    { name: 'Fund Types', count: 8 },
+    { name: 'ML Types & Methods', count: 6 },
+    { name: 'Portfolio Analytics', count: 7 },
+    { name: 'Modern Portfolio Theory', count: 6 },
+    { name: 'Tax Strategy', count: 6 },
+    { name: 'FTX Bankruptcy', count: 5 },
+    { name: 'Aladdin AI', count: 5 },
+    { name: 'VC & Angel', count: 5 },
+    { name: 'WeWork Bankruptcy', count: 5 },
+    { name: 'Major Financial Crises', count: 7 },
+    { name: 'Neural Networks', count: 4 },
+    { name: 'Quantum Computing', count: 4 },
+    { name: 'NegaScout Algorithm', count: 4 },
+    { name: 'HFT / Quant', count: 4 },
+    { name: 'Offshore Banking', count: 4 },
+    { name: 'Warner / Netflix', count: 4 },
+    { name: 'Agentic AI', count: 3 },
+    { name: 'Markov Chains', count: 3 },
+    { name: 'Corp. Structures', count: 3 },
+    { name: 'Corp. Consulting', count: 3 },
+    { name: 'Market Manipulation', count: 2 },
+    { name: 'PPP Theory', count: 2 },
+  ];
+
+  function heatClass(n) {
+    if (n >= 7) return 'heat-5';
+    if (n >= 6) return 'heat-4';
+    if (n >= 4) return 'heat-3';
+    if (n >= 3) return 'heat-2';
+    return 'heat-1';
+  }
+
+  const grid = document.getElementById('heat-grid');
+  if (!grid) return;
+
+  topics.forEach(t => {
+    const cell = document.createElement('div');
+    cell.className = 'heat-cell ' + heatClass(t.count);
+    cell.title = t.name + ' — ' + t.count + ' subtopics';
+    cell.innerHTML = `
+      <div class="heat-cell-label">${t.name}</div>
+      <div class="heat-cell-count">${t.count}</div>
+    `;
+    grid.appendChild(cell);
+  });
+}
+
+/* ---- SKILL RANK ---- */
+function buildSkillRank() {
+  const skills = [
+    { name: 'Corporate Law & Case Studies', score: 93 },
+    { name: 'Portfolio Analytics', score: 82 },
+    { name: 'AI Architecture & ML', score: 74 },
+    { name: 'Financial Crises & History', score: 70 },
+    { name: 'Hedge Funds & Operators', score: 66 },
+    { name: 'Private Equity & VC', score: 62 },
+    { name: 'Quantitative / HFT', score: 55 },
+    { name: 'Emerging Tech & Algorithms', score: 50 },
+    { name: 'Agentic AI & AI in Finance', score: 48 },
+    { name: 'Cybersecurity', score: 8 },
+  ];
+
+  const list = document.getElementById('skill-rank-list');
+  if (!list) return;
+
+  skills.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'skill-rank-row';
+    row.innerHTML = `
+      <span class="skill-rank-num">${String(i + 1).padStart(2, '0')}</span>
+      <span class="skill-rank-name">${s.name}</span>
+      <div class="skill-rank-bar-wrap">
+        <div class="skill-rank-bar" data-w="${s.score}"></div>
+      </div>
+      <span class="skill-rank-score">${s.score}%</span>
+    `;
+    list.appendChild(row);
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.skill-rank-bar').forEach(bar => {
+      const w = bar.getAttribute('data-w');
+      bar.style.width = w + '%';
+    });
+  }, 100);
+}
+
+/* ---- DEPTH BARS ---- */
+function animateDepthBars() {
+  setTimeout(() => {
+    document.querySelectorAll('.depth-fill').forEach(fill => {
+      const pct = fill.getAttribute('data-pct');
+      fill.style.width = pct + '%';
+    });
+  }, 100);
+}
+
+/* ---- RADIAL ARCS ---- */
+function drawRadialArcs() {
+  document.querySelectorAll('.radial-arc').forEach(canvas => {
+    const pct = parseInt(canvas.getAttribute('data-pct'));
+    const label = canvas.getAttribute('data-label');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const R = Math.min(W, H) * 0.38;
+
+    let progress = 0;
+    function anim() {
+      progress = Math.min(progress + 0.05, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      ctx.clearRect(0, 0, W, H);
+
+      // BG ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.strokeStyle = '#f0efed';
+      ctx.lineWidth = 5;
+      ctx.stroke();
+
+      // Fill arc
+      const endAngle = -Math.PI / 2 + (Math.PI * 2) * (pct / 100) * ease;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, -Math.PI / 2, endAngle);
+      ctx.strokeStyle = pct < 15 ? '#d8d7d4' : '#0a0a0a';
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // Center text
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '500 11px "DM Mono", monospace';
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillText(label, cx, cy);
+
+      if (progress < 1) requestAnimationFrame(anim);
+    }
+    anim();
+  });
+}
+</script>
+</body>
+</html>
